@@ -62,15 +62,13 @@ def list(bot, update):
 def agregar(bot, update):
     conn = sqlite3.connect('panini.db')
     cursor = conn.cursor()
-    print(update.message.text)
     lista = update.message.text.replace('/agregar', '').replace(' ', '').split(',')
     for figu in lista:
-
-        figu_db = cursor.execute('SELECT agregada FROM figuras WHERE id = ?', figu).fetchone()
+        figu_db = cursor.execute('SELECT agregada FROM figuras WHERE numero = ?', [figu]).fetchone()
         if figu_db[0] == 1:
-            cursor.execute('UPDATE figuras SET repetida = 1 WHERE id = ?', figu)
+            cursor.execute('UPDATE figuras SET repetida = 1 WHERE numero = ?', [figu])
         else:
-            cursor.execute('UPDATE figuras SET agregada = 1 WHERE id = ?', figu)
+            cursor.execute('UPDATE figuras SET agregada = 1 WHERE numero = ?', [figu])
     conn.commit()
 
 def quitar(bot, update):
@@ -78,14 +76,14 @@ def quitar(bot, update):
     cursor = conn.cursor()
     lista = update.message.text.replace('/quitar', '').replace(' ', '').split(',')
     for figu in lista:
-        cursor.execute('UPDATE figuras SET repetida = 0 WHERE id = ?', figu)
+        cursor.execute('UPDATE figuras SET repetida = 0 WHERE id = ?', [figu])
     conn.commit()
 
 def consultar(bot, update):
     conn = sqlite3.connect('panini.db')
     cursor = conn.cursor()
     figura = update.message.text.replace('/consultar', '').replace(' ', '')
-    figu_db = cursor.execute('SELECT agregada, repetida FROM figuras WHERE id = ?', figura).fetchone()
+    figu_db = cursor.execute('SELECT agregada, repetida FROM figuras WHERE id = ?', [figura]).fetchone()
     aRet = 'Figura %s ' % figura
     if figu_db[0] == 1:
         aRet += ' agregada'
