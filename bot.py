@@ -6,31 +6,14 @@ import sqlite3
 
 from telegram.ext import Updater, CommandHandler
 
+import models
+
 token = os.environ['TELEGRAM_TOKEN']
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-conn = sqlite3.connect('panini.db')
-cursor = conn.cursor()
-sql_create_panini_table = """ CREATE TABLE IF NOT EXISTS figuras (
-                                    id integer PRIMARY KEY,
-                                    numero text NOT NULL,
-                                    agregada INTEGER ,
-                                    repetida INTEGER 
-                                ); """
-cursor.execute(sql_create_panini_table)
-conn.commit()
-
-if not cursor.execute('SELECT * FROM figuras').fetchone():
-    print('Insertando')
-    for i in range(0, 670):
-        cursor.execute("INSERT INTO figuras VALUES (?, ?, 0, 0)", (i, str(i)))
-conn.commit()
-conn.close()
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
-
+models.load_sticker_table()
 
 def list(bot, update):
     """Send a message when the command /start is issued."""
